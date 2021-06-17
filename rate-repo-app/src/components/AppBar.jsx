@@ -2,7 +2,10 @@ import React from 'react';
 import { Text, View, StyleSheet, Pressable, Alert, ScrollView } from 'react-native';
 import { Link } from "react-router-native";
 import Constants from 'expo-constants';
+import useUser from '../hooks/useUser';
 
+import useAuthStorage from '../hooks/useAuthStorage';
+import { useApolloClient } from '@apollo/client';
 const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
@@ -20,7 +23,33 @@ const styles = StyleSheet.create({
   // ...
 });
 
+
+
+
 const AppBar = () => {
+  const {user} = useUser();
+  const authStorage = useAuthStorage();
+  const apolloClient = useApolloClient();
+
+  const signOut = async () => {
+    await authStorage.removeAccessToken();
+    await apolloClient.resetStore(); //clear Apollo client cache and re-execute all active queries
+  };
+
+  if (user){
+    return <View style={styles.container}>
+    <ScrollView horizontal>
+      <Pressable onPress = {() => Alert.alert("You pressed the text!")}>
+        <Link to = "/">
+            <Text style = {styles.text}> Repositories</Text>
+          </Link>
+      </Pressable>
+      <Pressable onPress = {signOut}>
+          <Text style = {styles.text}> Sign Out</Text>
+      </Pressable>
+    </ScrollView>
+      </View>;
+  }
   return <View style={styles.container}>
     <ScrollView horizontal>
       <Pressable onPress = {() => Alert.alert("You pressed the text!")}>
