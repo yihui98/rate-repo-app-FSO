@@ -1,5 +1,8 @@
-{
-  "expo": {
+/* eslint-disable no-undef */
+
+ import 'dotenv/config';
+ 
+ export default {
     "name": "rate-repo-app",
     "slug": "rate-repo-app",
     "version": "1.0.0",
@@ -27,6 +30,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra":{
+        env: process.env.ENV,
+        uri: process.env.APOLLO_URI
     }
-  }
-}
+  };
+
