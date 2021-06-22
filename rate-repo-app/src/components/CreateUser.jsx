@@ -1,13 +1,13 @@
 import React from 'react';
-import { Pressable, View, StyleSheet  } from 'react-native';
+import {  View, StyleSheet, Button  } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from "react-router-dom";
 
-import Text from './Text';
+import useCreateUser from '../hooks/useCreateUser';
+import useSignIn from '../hooks/useSignIn';
 import FormikTextInput from './FormikTextInput';
 import theme from '../theme';
-import  useSignIn from '../hooks/useSignIn';
 
 const styles = StyleSheet.create({
     container: {
@@ -41,43 +41,51 @@ const styles = StyleSheet.create({
 export const initialValues = {
     username: '',
     password: '',
+    passwordConfirm: ''
 };
 
 export const validationSchema = yup.object().shape({
   username: yup
     .string()
-    .min(5, 'Username must have min of 5 letters')
-    .required('Username is required'),
-  password: yup
+    .min(5, "Username must be more than 5 characters")
+    .max(30, "Username must be less than 30 characters")
+    .required('Repository owner name is required'),
+    password: yup
     .string()
-    .min(8, 'Password must be more than or equal to 8 letters')
+    .min(5, "Password must be more than 5 characters")
+    .max(50, "Password must be less than 50 characters")
     .required('Password is required'),
-});
+    passwordConfirm: yup
+    .string()
+    .oneOf([yup.ref('password'), null])
+    .required('Password confirmation must match the password')
+  });
 
-export const SignInForm = ({ onSubmit }) => {
+export const CreateUserForm = ({ onSubmit }) => {
     return (
       <View style = {styles.container}>
-        <FormikTextInput style = {styles.loginBox} name="username" placeholder="Username" testID = 'usernameField' />
-        <FormikTextInput style = {styles.loginBox} secureTextEntry name="password" placeholder="Password" testID = 'passwordField' />
-        <Pressable onPress={onSubmit}>
-          <Text style = {styles.signInContainer} testID = 'submitButton'>Sign in</Text>
-        </Pressable>
+        <FormikTextInput style = {styles.loginBox} name="username" placeholder="Username" />
+        <FormikTextInput style = {styles.loginBox} secureTextEntry name="password" placeholder="Password" />
+        <FormikTextInput style = {styles.loginBox} secureTextEntry name="passwordConfirm" placeholder="Confirm Password" />
+        <Button onPress = {onSubmit} title = 'Create a user' />
       </View>
     );
   };
 
-  const SignIn = () => {
+  const CreateUser = () => {
+    const [ createUser ] = useCreateUser();
     const [ signIn ] = useSignIn();
-    let history = useHistory();
+    const history = useHistory();
 
     const onSubmit = async (values) => {
+      console.log("values", values);
       const { username, password } = values;
       
       try{
-        const data  = await signIn({ username, password});
-        console.log(data);
-        console.log("Login successful");
-        history.push("/");
+        const data  = await createUser({ username, password });
+        await signIn({ username, password});
+        history.push('/');
+        console.log("Data for create user", data);
       } catch(e){
         console.log(e);
       }
@@ -85,9 +93,9 @@ export const SignInForm = ({ onSubmit }) => {
   
     return (
       <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema = {validationSchema}>
-        {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
+        {({ handleSubmit }) => <CreateUserForm onSubmit={handleSubmit} />}
       </Formik>
     );
   };
 
-export default SignIn;
+export default CreateUser;

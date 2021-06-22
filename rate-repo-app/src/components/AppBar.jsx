@@ -6,19 +6,26 @@ import useUser from '../hooks/useUser';
 
 import useAuthStorage from '../hooks/useAuthStorage';
 import { useApolloClient } from '@apollo/client';
+
 const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
     backgroundColor: "black",
     flexGrow: 0,
     flexShrink:1,
-    flexDirection: "row"
+    flexDirection: "row",
+    
   },
   text: {
       color: "white",
       textAlign: "left",
       textAlignVertical: "bottom",
-      fontSize: 20
+      fontSize: 18,
+      fontWeight: 'bold',
+      paddingRight: 5,
+      paddingBottom: 20,
+      paddingLeft: 10,
+      paddingTop: 10
   }
   // ...
 });
@@ -44,6 +51,16 @@ const AppBar = () => {
             <Text style = {styles.text}> Repositories</Text>
           </Link>
       </Pressable>
+      <Pressable onPress = {() => Alert.alert("You pressed the text!")}>
+        <Link to = "/createReview">
+            <Text style = {styles.text}> Create a review</Text>
+          </Link>
+      </Pressable>
+      <Pressable onPress = {() => Alert.alert("You pressed the text!")}>
+        <Link to = "/myReviews">
+            <Text style = {styles.text}> My reviews</Text>
+          </Link>
+      </Pressable>
       <Pressable onPress = {signOut}>
           <Text style = {styles.text}> Sign Out</Text>
       </Pressable>
@@ -61,6 +78,11 @@ const AppBar = () => {
         <Link to = "/signin">
           <Text style = {styles.text}> Sign In</Text>
         </Link>
+      </Pressable>
+      <Pressable onPress = {() => Alert.alert("You pressed the text!")}>
+        <Link to = "/signup">
+            <Text style = {styles.text}> Sign up</Text>
+          </Link>
       </Pressable>
     </ScrollView>
       </View>;

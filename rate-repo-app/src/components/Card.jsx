@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
-
+import { View, Image, StyleSheet, Pressable, Alert, Button } from 'react-native';
+import { Link } from "react-router-native";
+import * as WebBrowser from 'expo-web-browser';
 import Text from './Text';
 import theme from '../theme';
 
@@ -42,20 +43,22 @@ const cardHeaderStyles = StyleSheet.create({
 
 const CardHeader = ({props}) => {
   return (
-    <View style={cardHeaderStyles.container}>
-      <View style={cardHeaderStyles.avatarContainer}>
-        <Image style={cardHeaderStyles.avatar} source={{uri : props.ownerAvatarUrl }} />
-      </View>
-      <View style={cardHeaderStyles.infoContainer}>
-        <Text fontWeight="bold" fontSize="subheading">{props.fullName}</Text>
-        <Text color="textSecondary" style={cardHeaderStyles.text}>{props.description}</Text>
-        <View style = {cardHeaderStyles.container}>
-          <Text color = "white" style = {cardHeaderStyles.descriptionContainer} > {props.language} </Text>
+    <Pressable onPress = {() => Alert.alert("You pressed the text!")}>
+      <Link to = {`/repositories/${props.id}`}>
+        <View style={cardHeaderStyles.container}>
+          <View style={cardHeaderStyles.avatarContainer}>
+            <Image style={cardHeaderStyles.avatar} source={{uri : props.ownerAvatarUrl }} />
+          </View>
+          <View style={cardHeaderStyles.infoContainer}>
+            <Text fontWeight="bold" fontSize="subheading" testID = 'fullName'>{props.fullName}</Text>
+            <Text color="textSecondary" style={cardHeaderStyles.text} testID = 'description'>{props.description}</Text>
+            <View style = {cardHeaderStyles.container}>
+              <Text color = "white" style = {cardHeaderStyles.descriptionContainer} testID = 'language'> {props.language} </Text>
+            </View>
+          </View>
         </View>
-
-        
-      </View>
-    </View>
+      </Link>
+    </Pressable>
   );
 };
 
@@ -75,10 +78,10 @@ const cardFooterStyles = StyleSheet.create({
 });
 
 const TypeCount = ({ name, number }) =>{
-  const newNumber = number > 1000 ? (number/1000).toFixed(1) + " k" : number;
+  const newNumber = number > 1000 ? (number/1000).toFixed(1) + "k" : number;
   return(
     <View style = {cardFooterStyles.typeCount} >
-      <Text> {newNumber} </Text>
+      <Text testID = {name}> {newNumber} </Text>
       <Text> {name}</Text>
     </View>
   );
@@ -88,10 +91,10 @@ const TypeCount = ({ name, number }) =>{
 const CardFooter = ({props}) => {
   return (
     <View style={cardFooterStyles.container}>
-      <TypeCount name = "Stars" number = {props.stargazersCount}/>
-      <TypeCount name = "Forks" number = {props.forksCount}/>
-      <TypeCount name = "Reviews" number = {props.reviewCount}/>
-      <TypeCount name = "Rating" number = {props.ratingAverage}/>
+      <TypeCount name = "Stars" number = {props.stargazersCount} />
+      <TypeCount name = "Forks" number = {props.forksCount} />
+      <TypeCount name = "Reviews" number = {props.reviewCount} />
+      <TypeCount name = "Rating" number = {props.ratingAverage} />
     </View>
   );
 };
@@ -105,7 +108,25 @@ const cardStyles = StyleSheet.create({
   },
 });
 
-const Card = ({props}) => {
+const SubmitButton = ({props}) =>{
+  const handleOpenWithWebBrowser = () => {
+    WebBrowser.openBrowserAsync(props.url);
+  };
+  return(
+    <Button title = "Open in GitHub" onPress = {handleOpenWithWebBrowser}/>
+  );
+  };
+
+const Card = ({props, showUrl}) => {
+  if (showUrl){
+    return(
+      <View style={cardStyles.container}>
+      <CardHeader props = {props} />
+      <CardFooter props = {props}/>
+      <SubmitButton props = {props} />
+    </View>
+    );
+  }
   return (
     <View style={cardStyles.container}>
       <CardHeader props = {props} />

@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 //import Text from './Text';
 import Card from './Card';
 
+
 const styles = StyleSheet.create({
   container: {
     color: "white"
@@ -17,9 +18,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const RepositoryItem = ({ props }) => (
+const RepositoryItem = ({ props, showUrl }) => (
         <View style = {styles.container}>
-          <Card props = {props} />
+          <Card props = {props} showUrl = {showUrl} />
         </View>
 );
   
