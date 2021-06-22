@@ -3,8 +3,10 @@ import { useQuery } from '@apollo/client';
 
 import { GET_USER } from '../graphql/queries';
 
-const useUser = () => {
-  const { data, error, loading } = useQuery(GET_USER);
+const useUser = (variables) => {
+
+  const { data, error, loading } = useQuery(GET_USER, { variables });
+  
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;  
   
